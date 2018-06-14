@@ -1,5 +1,6 @@
 import algorithm.ClassMetricsFactors;
 import algorithm.FileMetricsFactors;
+import algorithm.MethodMetricsFactors;
 import algorithm.impl.ClassMetricsFactorsimpl;
 import algorithm.impl.FileMetricsFactorsimpl;
 import org.apache.log4j.Logger;
@@ -53,12 +54,33 @@ public class Main {
         logger.info("***************************************************************************");
         map = classMetricsFactors.getLineOfCommentInClass();
         for (String key : map.keySet()) {
-            logger.info("类名 -> " + key + " ; 注释个数 -> " + map.get(key));
+            logger.info("类名 -> " + key + " ; 注释行数 -> " + map.get(key));
         }
         logger.info("***************************************************************************");
         map = classMetricsFactors.getLocInClass();
         for (String key : map.keySet()) {
             logger.info("类名 -> " + key + " ; 代码行数 -> " + map.get(key));
+        }
+        logger.info("***************************************************************************");
+        logger.info("***************************************************************************");
+        logger.info("");
+        logger.info("***************************************************************************");
+        logger.info("java文件中方法的分析结果：                                                   *");
+        logger.info("***************************************************************************");
+        MethodMetricsFactors methodMetricsFactors = (MethodMetricsFactors) classMetricsFactors;
+        map = methodMetricsFactors.getLocInMethod();
+        for (String key : map.keySet()) {
+            logger.info("方法名 -> " + key + " ; 代码行数 -> " + map.get(key));
+        }
+        logger.info("***************************************************************************");
+        map = methodMetricsFactors.getLineOfStatementInMethod();
+        for (String key : map.keySet()) {
+            logger.info("方法名 -> " + key + " ; 语句个数 -> " + map.get(key));
+        }
+        logger.info("***************************************************************************");
+        map = methodMetricsFactors.getLineOfCommentInMethod();
+        for (String key : map.keySet()) {
+            logger.info("方法名 -> " + key + " ; 注释行数 -> " + map.get(key));
         }
         logger.info("***************************************************************************");
     }

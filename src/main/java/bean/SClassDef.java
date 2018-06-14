@@ -300,4 +300,119 @@ public class SClassDef extends STreeAbs {
         // 注意返回值还要加上innerLoc
         return loc+innerLoc;
     }
+
+    /**
+     * 计算每个方法的代码行数
+     * 以map的形式返回结果
+     * key=className.methodName
+     * value为该方法的代码行数
+     * @return
+     */
+    public Map<String, Integer> computeMethodLocMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return computeMethodLocMap(innerClasses, null);
+    }
+
+    public Map<String, Integer> computeMethodLocMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
+        return computeForMethodMap(innerClasses, map, MCType.LOC);
+    }
+
+    /**
+     * 计算每个方法的语句数
+     * 以map的形式返回结果
+     * key=className.methodName
+     * value为该方法的语句数
+     * @return
+     */
+    public Map<String, Integer> computeMethodStatementMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return computeMethodStatementMap(innerClasses, null);
+    }
+
+    public Map<String, Integer> computeMethodStatementMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
+        return computeForMethodMap(innerClasses, map, MCType.STATEMENT);
+    }
+
+    /**
+     * 计算每个方法的注释数
+     * 以map的形式返回结果
+     * key=className.methodName
+     * value为该方法的注释数
+     * @return
+     */
+    public Map<String, Integer> computeMethodCommentMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return computeMethodCommentMap(innerClasses, null);
+    }
+
+    public Map<String, Integer> computeMethodCommentMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
+        return computeForMethodMap(innerClasses, map, MCType.COMMENT);
+    }
+    /**
+     * 以方法作为单位进行计算
+     * 可以计算方法loc, 语句数目, 注释数目
+     * 通过第三个枚举参数指定具体计算方法
+     * @param innerClasses
+     * @param map
+     * @param type
+     * @return
+     */
+    private Map<String, Integer> computeForMethodMap(List<SClassDef> innerClasses, Map<String, Integer> map, MCType type) {
+        if (innerClasses == null)
+            return map;
+
+        if (map == null) {
+            map = new HashMap<String, Integer>();
+        }
+
+        for (int i = 0;i < innerClasses.size();i++) {
+            String className = innerClasses.get(i).getName();
+
+            List<SMethodDef> methods = innerClasses.get(i).getMethods();
+            for (int j = 0;j < methods.size();j++) {
+                String methodName = methods.get(j).getName();
+                int startPos = methods.get(j).getStartPos();
+                int endPos = methods.get(j).getEndPos();
+                int count = 0;
+                switch (type) {
+                    case LOC:
+                        count = StringUtil.getLoc(methods.get(j).docComment + "\n"
+                                + methods.get(j).getSource().subSequence(startPos, endPos).toString());
+                        break;
+                    case COMMENT:
+                        count = StringUtil.getLineOfString(methods.get(j).docComment);
+                        break;
+                    case STATEMENT:
+                        count = methods.get(j).getStatementSize();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("unsupported type " + type);
+                }
+                map.put(className + "." + methodName, count);
+            }
+            computeForMethodMap(innerClasses.get(i).getInnerClasses(), map, type);
+        }
+
+        return map;
+    }
+
+    /**
+     * 表示对于方法的计算类型
+     */
+    private enum MCType {
+        /**
+         * 计算方法中代码行数目
+         */
+        LOC,
+
+        /**
+         * 计算方法中语句数目
+         */
+        STATEMENT,
+
+        /**
+         * 计算方法注释数目
+         */
+        COMMENT,
+    }
 }

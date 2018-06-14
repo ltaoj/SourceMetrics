@@ -1,6 +1,7 @@
 package algorithm.impl;
 
 import algorithm.ClassMetricsFactors;
+import algorithm.MethodMetricsFactors;
 import bean.SClassDef;
 import com.sun.source.util.TreeScanner;
 import parse.SourceParser;
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * @version : 1.0
  */
-public class ClassMetricsFactorsimpl implements ClassMetricsFactors {
+public class ClassMetricsFactorsimpl implements ClassMetricsFactors, MethodMetricsFactors {
 
     private SourceParser mParser;
     private SClassDef dummy;
@@ -73,4 +74,23 @@ public class ClassMetricsFactorsimpl implements ClassMetricsFactors {
         return null;
     }
 
+    @Override
+    public Map<String, Integer> getLocInMethod() {
+        return dummy.computeMethodLocMap();
+    }
+
+    @Override
+    public Map<String, Integer> getLineOfStatementInMethod() {
+        return dummy.computeMethodStatementMap();
+    }
+
+    @Override
+    public Map<String, Integer> getLineOfCommentInMethod() {
+        return dummy.computeMethodCommentMap();
+    }
+
+    @Override
+    public Map<String, Integer> getCyclomaticComplexityOfMethod() {
+        return null;
+    }
 }
