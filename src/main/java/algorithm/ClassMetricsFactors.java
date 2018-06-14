@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.util.Map;
+
 /**
  * Created by ltaoj on 2018/06/13 22:46.
  *
@@ -11,35 +13,35 @@ public interface ClassMetricsFactors {
      * 获取类的代码行数
      * @return
      */
-    int getLocInClass();
+    Map<String, Integer> getLocInClass();
 
     /**
      * 获取类的语句数
      * @return
      */
-    int getLineOfStatementInClass();
+    Map<String, Integer> getLineOfStatementInClass();
 
     /**
      * 获取类的注释数
      * @return
      */
-    int getLineOfCommentInClass();
+    Map<String, Integer> getLineOfCommentInClass();
 
     /**
      * 获取类的方法数
      * @return
      */
-    int getNumberOfMethodInClass();
+    Map<String, Integer> getNumberOfMethodInClass();
 
     /**
      * 获取类的属性数
      * @return
      */
-    int getNumberOfAttrInClass();
+    Map<String, Integer> getNumberOfAttrInClass();
 
     /**
      * 获取类的圈复杂度
      * @return
      */
-    int getCyclomaticComplexityOfClass();
+    Map<String, Integer> getCyclomaticComplexityOfClass();
 }

@@ -269,7 +269,7 @@ public class LexicalAnalyzer {
             return errorCode;
         }
     }
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //		StringBuffer sb = new StringBuffer();
 //		Scanner input = new Scanner(System.in);
 //		System.out.println("请输入源程序,(结束行标志为over):");
@@ -281,7 +281,7 @@ public class LexicalAnalyzer {
 //		System.out.println(sb.toString());
 //		LexicalAnalyzer analyzer = new LexicalAnalyzer();
 //		analyzer.startAnalyze(sb.toString());
-    }
+//    }
     public LexicalAnalyzer(String sourceStr) {
         this.sourceStr = sourceStr + "\0";
         this.ob_result = new ArrayList<LexicalKV>();

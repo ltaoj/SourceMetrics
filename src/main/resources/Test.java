@@ -7,14 +7,27 @@ import org.apache.log4j.Logger;
  */
 public class Test {
 
+    /**
+     * pri str test
+     * hello world
+     * hello world
+     */
     private String test;
 
+    /**
+     * hello str test
+     * @param test
+     */
     public Test(String test) {
         this.test = test;
+        this.test = null;
+        this.test = test;
+        this.test = null;
     }
 
     /**
      * test
+     * print
      */
     public void print() {
         System.out.println(test);
@@ -39,8 +52,17 @@ public class Test {
     /**
      * class test2
      */
-    public class Test2 {
+    public class Test2 extends Test {
+        /**
+         * a + b
+         */
         public int a;
+
+
+        /**
+         * aa
+         */
+
         private Integer aa;
 
         /**
@@ -58,14 +80,25 @@ public class Test {
     /**
      * a
      * a
-     *
+     * a
      */
-    public class Test3 {
+    public abstract class Test3 {
         // var b
         public int b;
 
         public class Test4 {
             public int c;
+
+            /**
+             * @param a
+             * @return a * 3
+             */
+            public int mul(int a) {
+                int b = a * 3;
+                return b;
+            }
         }
     }
+
+    private String str;
 }

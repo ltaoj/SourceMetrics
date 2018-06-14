@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class StringUtil {
 
-    private static int getLineOfString(String str) {
+    public static int getLineOfString(String str) {
         if (str == null || str.length() == 0)
             return 0;
         int res = 1;
@@ -61,5 +61,64 @@ public class StringUtil {
      */
     public static boolean hasDocCommentEnd(String str) {
         return str.contains("*/");
+    }
+
+    /**
+     * 计算代码行
+     * @param code 代码文本
+     * @return
+     */
+    public static int getLoc(String code) {
+        return getLoc(code, false);
+    }
+
+    /**
+     * 计算代码行
+     * @param code 代码文本
+     * @param ignoreDocComment 是否忽略文档注释
+     * @return
+     */
+    public static int getLoc(String code, boolean ignoreDocComment) {
+        int endPos = code.indexOf('\n');
+        if (endPos == -1)
+            return 0;
+
+        if (code.lastIndexOf('\n') != code.length()-1)
+            code += "\n";
+        // 将多个空行替换成一个空行
+        code = code.replaceAll("\n+", "\n");
+
+        int loc = 0;
+        int startPos = 0;
+
+        boolean newDocStart = false;
+        String line;
+        while ((endPos != -1 && (line = code.substring(startPos, endPos)) != null)) {
+            if (StringUtil.isEmptyString(line))
+                continue;
+            // 当需要忽略文档注释时执行此代码块
+            if (ignoreDocComment) {
+                if (newDocStart && !StringUtil.hasDocCommentEnd(line)) {
+                    System.out.println(line);
+                    continue;
+                }
+
+                if (StringUtil.hasDocCommentStart(line) && !newDocStart) {
+                    System.out.println(line);
+                    newDocStart = !StringUtil.hasDocCommentEnd(line);
+                    continue;
+                }
+
+                if (StringUtil.hasDocCommentEnd(line)) {
+                    System.out.println(line);
+                    newDocStart = false;
+                    continue;
+                }
+            }
+            loc++;
+            startPos = endPos+1;
+            endPos = code.indexOf('\n', startPos);
+        }
+        return loc;
     }
 }
