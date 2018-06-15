@@ -5,7 +5,6 @@ import bean.SClassDef;
 import bean.SMethodDef;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.file.JavacFileManager;
 import com.sun.tools.javac.parser.Parser;
 import com.sun.tools.javac.parser.ParserFactory;
@@ -14,7 +13,6 @@ import com.sun.tools.javac.tree.EndPosTable;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
 import org.apache.log4j.Logger;
-import util.AddressUtil;
 import util.StringUtil;
 
 import javax.lang.model.element.Modifier;

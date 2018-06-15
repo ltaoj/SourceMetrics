@@ -39,6 +39,14 @@ public class SMethodDef extends STreeAbs {
         return parameters;
     }
 
+    public String getParametersString() {
+        StringBuilder sb = new StringBuilder();
+        for (SAttributeDef param : parameters) {
+            sb.append(param + ",");
+        }
+        return sb.length() != 0 ? sb.substring(0, sb.length()-1).toString() : "";
+    }
+
     public void setParameters(List<SAttributeDef> parameters) {
         this.parameters = parameters;
     }

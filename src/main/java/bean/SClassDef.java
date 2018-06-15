@@ -373,6 +373,7 @@ public class SClassDef extends STreeAbs {
                 String methodName = methods.get(j).getName();
                 int startPos = methods.get(j).getStartPos();
                 int endPos = methods.get(j).getEndPos();
+                String parameters = methods.get(j).getParametersString();
                 int count = 0;
                 switch (type) {
                     case LOC:
@@ -388,7 +389,7 @@ public class SClassDef extends STreeAbs {
                     default:
                         throw new IllegalArgumentException("unsupported type " + type);
                 }
-                map.put(className + "." + methodName, count);
+                map.put(className + "." + methodName + "(" + parameters  + ")", count);
             }
             computeForMethodMap(innerClasses.get(i).getInnerClasses(), map, type);
         }

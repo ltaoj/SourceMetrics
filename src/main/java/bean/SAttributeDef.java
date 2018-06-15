@@ -25,4 +25,9 @@ public class SAttributeDef extends STreeAbs {
     public void setVarType(String varType) {
         this.varType = varType;
     }
+
+    @Override
+    public String toString() {
+        return getVarType() + " "  + getName();
+    }
 }
