@@ -1,5 +1,6 @@
 package bean;
 
+import node.Node;
 import util.StringUtil;
 
 import java.util.HashMap;
@@ -45,6 +46,9 @@ public class SClassDef extends STreeAbs {
 
     // 暂时保存内部类的结束位置
     private int innerTempEndPos;
+
+    // 暂时保存方法的结构树
+    private Node methodTempNode;
 
     public List<SAttributeDef> getAttributes() {
         return attributes;
@@ -120,6 +124,14 @@ public class SClassDef extends STreeAbs {
 
     public void setInnerTempEndPos(int innerTempEndPos) {
         this.innerTempEndPos = innerTempEndPos;
+    }
+
+    public Node getMethodTempNode() {
+        return methodTempNode;
+    }
+
+    public void setMethodTempNode(Node methodTempNode) {
+        this.methodTempNode = methodTempNode;
     }
 
     @Override
@@ -215,6 +227,38 @@ public class SClassDef extends STreeAbs {
             computeStatementMap(innerClasses.get(i).getInnerClasses(), map);
         }
 
+        return map;
+    }
+    /**
+     * 计算类的圏复杂度
+     * @return
+     */
+    public Map<String, Integer> computeComplexityMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return computeComplexityMap(innerClasses, null);
+    }
+
+    private Map<String, Integer> computeComplexityMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
+        if (innerClasses == null)
+            return map;
+
+        if (map == null) {
+            map = new HashMap<String, Integer>();
+        }
+
+        for (int i = 0;i < innerClasses.size();i++) {
+            String name = innerClasses.get(i).getName();
+
+            int complexity = 0;
+
+            List<SMethodDef> methods = innerClasses.get(i).getMethods();
+            for (int j = 0;j < methods.size();j++) {
+                complexity += methods.get(j).computeCyclomaticComplexity();
+            }
+
+            map.put(name, complexity);
+            computeComplexityMap(innerClasses.get(i).getInnerClasses(), map);
+        }
         return map;
     }
 
@@ -348,6 +392,22 @@ public class SClassDef extends STreeAbs {
     public Map<String, Integer> computeMethodCommentMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
         return computeForMethodMap(innerClasses, map, MCType.COMMENT);
     }
+
+    /**
+     * 计算每个方法的圏复杂度
+     * 以map的形式返回结果
+     * key=className.methodName
+     * value为该方法的圏复杂度
+     * @return
+     */
+    public Map<String, Integer> computeMethodComplexityMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return computeMethodComplexityMap(innerClasses, null);
+    }
+
+    public Map<String, Integer> computeMethodComplexityMap(List<SClassDef> innerClasses, Map<String, Integer> map) {
+        return computeForMethodMap(innerClasses, map, MCType.COMPLEXITY);
+    }
     /**
      * 以方法作为单位进行计算
      * 可以计算方法loc, 语句数目, 注释数目
@@ -386,6 +446,9 @@ public class SClassDef extends STreeAbs {
                     case STATEMENT:
                         count = methods.get(j).getStatementSize();
                         break;
+                    case COMPLEXITY:
+                        count = methods.get(j).computeCyclomaticComplexity();
+                        break;
                     default:
                         throw new IllegalArgumentException("unsupported type " + type);
                 }
@@ -415,5 +478,10 @@ public class SClassDef extends STreeAbs {
          * 计算方法注释数目
          */
         COMMENT,
+
+        /**
+         * 计算方法的圈复杂度
+         */
+        COMPLEXITY,
     }
 }

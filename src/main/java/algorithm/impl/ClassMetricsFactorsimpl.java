@@ -71,7 +71,7 @@ public class ClassMetricsFactorsimpl implements ClassMetricsFactors, MethodMetri
 
     @Override
     public Map<String, Integer> getCyclomaticComplexityOfClass() {
-        return null;
+        return dummy.computeComplexityMap();
     }
 
     @Override
@@ -91,6 +91,6 @@ public class ClassMetricsFactorsimpl implements ClassMetricsFactors, MethodMetri
 
     @Override
     public Map<String, Integer> getCyclomaticComplexityOfMethod() {
-        return null;
+        return dummy.computeMethodComplexityMap();
     }
 }

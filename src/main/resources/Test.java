@@ -1,5 +1,3 @@
-package test.com;
-import org.apache.log4j.Logger;
 /**
  * Created by ltaoj on 2018/06/12 20:10.
  *
@@ -20,6 +18,20 @@ public class Test {
      */
     public Test(String test) {
         this.test = test;
+        int a = 1;
+        int b = 2;
+        int c = 0;
+        if (a > b) {
+            c = a - b;
+        } else {
+            c = b - a;
+        }
+        while (c > 0) {
+            c--;
+            {
+                c++;
+            }
+        }
         this.test = null;
         this.test = test;
         this.test = null;
@@ -41,6 +53,30 @@ public class Test {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void test111() {
+        int a = 1;
+        int b = 2;
+        int c = 1;
+        int d = 2;
+        int e = 1;
+        int f = 1;
+        while (f > 0) {
+            f--;
+            while (e > 0) {
+                e--;
+                while (c > 0) {
+                    c--;
+                    if (a > 0) {
+                        a = a - b;
+                    }
+                    if (b > 0) {
+                        b = a;
+                    }
+                }
+            }
         }
     }
 
@@ -70,9 +106,6 @@ public class Test {
          * @param a
          */
         public void setA(int a) {
-            ;
-            ;
-            ;
             this.a = a;
         }
     }

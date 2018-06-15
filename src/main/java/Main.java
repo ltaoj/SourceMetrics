@@ -2,6 +2,7 @@ import algorithm.ClassMetricsFactors;
 import algorithm.FileMetricsFactors;
 import algorithm.MethodMetricsFactors;
 import algorithm.impl.ClassMetricsFactorsimpl;
+import algorithm.impl.FileMetricsFactorsAdapter;
 import algorithm.impl.FileMetricsFactorsimpl;
 import org.apache.log4j.Logger;
 import util.FilePath;
@@ -20,7 +21,7 @@ public class Main {
     public static void main(String[] args) {
 
         FilePath filePath = new FilePath();
-        FileMetricsFactors fileMetricsFactors = new FileMetricsFactorsimpl();
+        FileMetricsFactors fileMetricsFactors = new FileMetricsFactorsAdapter();
         logger.info("***************************************************************************");
         logger.info("java文件分析结果：                                                          *");
         logger.info("***************************************************************************");
@@ -62,6 +63,11 @@ public class Main {
             logger.info("类名 -> " + key + " ; 代码行数 -> " + map.get(key));
         }
         logger.info("***************************************************************************");
+        map = classMetricsFactors.getCyclomaticComplexityOfClass();
+        for (String key : map.keySet()) {
+            logger.info("类名 -> " + key + " ; 圏复杂度 -> " + map.get(key));
+        }
+        logger.info("***************************************************************************");
         logger.info("***************************************************************************");
         logger.info("");
         logger.info("***************************************************************************");
@@ -81,6 +87,11 @@ public class Main {
         map = methodMetricsFactors.getLineOfCommentInMethod();
         for (String key : map.keySet()) {
             logger.info("方法名 -> " + key + " ; 注释行数 -> " + map.get(key));
+        }
+        logger.info("***************************************************************************");
+        map = methodMetricsFactors.getCyclomaticComplexityOfMethod();
+        for (String key : map.keySet()) {
+            logger.info("方法名 -> " + key + " ; 圏复杂度 -> " + map.get(key));
         }
         logger.info("***************************************************************************");
     }

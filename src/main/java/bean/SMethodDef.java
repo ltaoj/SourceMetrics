@@ -1,5 +1,7 @@
 package bean;
 
+import node.Node;
+
 import java.util.List;
 
 /**
@@ -17,6 +19,8 @@ public class SMethodDef extends STreeAbs {
     private String body;
     // 方法语句数量
     private int statementSize;
+    // 方法结构树
+    private Node strucNode;
 
     public SMethodDef(CharSequence source) {
         super(source);
@@ -65,5 +69,25 @@ public class SMethodDef extends STreeAbs {
 
     public void setStatementSize(int statementSize) {
         this.statementSize = statementSize;
+    }
+
+    public Node getStrucNode() {
+        return strucNode;
+    }
+
+    public void setStrucNode(Node strucNode) {
+        this.strucNode = strucNode;
+    }
+
+    public int computeNodes() {
+        return (strucNode != null ? strucNode.computeNodes() : 0);
+    }
+
+    public int computeEdges() {
+        return (strucNode != null ? strucNode.computeEdges() : 0);
+    }
+
+    public int computeCyclomaticComplexity() {
+        return (strucNode != null ? strucNode.computeCyclomaticComplexity() + 1 : 0);
     }
 }

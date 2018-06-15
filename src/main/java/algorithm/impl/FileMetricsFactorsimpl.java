@@ -1,6 +1,5 @@
 package algorithm.impl;
 
-import algorithm.ClassMetricsFactors;
 import algorithm.FileMetricsFactors;
 import com.sun.source.util.TreeScanner;
 import parse.SourceParser;

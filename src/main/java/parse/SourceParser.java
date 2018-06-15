@@ -3,6 +3,7 @@ package parse;
 import bean.SAttributeDef;
 import bean.SClassDef;
 import bean.SMethodDef;
+import com.sun.imageio.plugins.jpeg.JPEG;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.file.JavacFileManager;
@@ -12,6 +13,10 @@ import com.sun.tools.javac.tree.DocCommentTable;
 import com.sun.tools.javac.tree.EndPosTable;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.util.Context;
+import node.DummyNode;
+import node.Node;
+import node.NodeFactory;
+import node.ReflectNodeFactory;
 import org.apache.log4j.Logger;
 import util.StringUtil;
 
@@ -334,16 +339,18 @@ public class SourceParser<R, P> {
                     if (body != null) {
                         methodDef.setBody(body.toString());
                     }
-                    // 方法语句数目*******
+                    // 方法语句数目以及方法结构*******
                     SClassDef tempClass = new SClassDef(null);
                     scan(jcTree, tempClass);
 //                    List<JCTree.JCStatement> statements = ((JCTree.JCBlock) body).getStatements();
                     if (tempClass.getModifiers() != null) {
                         methodDef.setStatementSize(tempClass.getModifiers().size());
+                        methodDef.setStrucNode(tempClass.getMethodTempNode());
                         // for gc
                         tempClass.setModifiers(null);
                         tempClass = null;
                     }
+
                     // 方法参数列表
                     List<JCTree.JCVariableDecl> params = ((JCTree.JCMethodDecl) jcTree).getParameters();
                     if (params != null) {
@@ -371,9 +378,16 @@ public class SourceParser<R, P> {
 
         @Override
         public Map<String, SClassDef> visitMethod(MethodTree node, SClassDef sClassDef) {
+            // 对方法进行语句扫描
             CountStatement statementScanner = new CountStatement();
             List<String> statementList = statementScanner.visitMethod(node, null);
+            // 对方法结构进行构建
+            final DummyNode dummyNode = new DummyNode();
+            StrucMethodScanner strucMethodScanner = new StrucMethodScanner();
+            strucMethodScanner.visitMethod(node, dummyNode);
+
             sClassDef.setModifiers(statementList);
+            sClassDef.setMethodTempNode(dummyNode);
             return null;
         }
 
@@ -408,17 +422,211 @@ public class SourceParser<R, P> {
             }
             return list;
         }
-        /**
-         * 不包含方法之下的变量声明
-         * @param node
-         * @param stringListMap
-         * @return
-         */
-//        @Override
-//        public Map<String, List<String>> visitMethod(MethodTree node, Map<String, List<String>> stringListMap) {
-//            return stringListMap;
-//        }
     }
 
+    public static class StrucMethodScanner extends TreeScanner<Void, Node> {
+
+        private NodeFactory mNodeFactory;
+
+        public StrucMethodScanner() {
+            this.mNodeFactory = new ReflectNodeFactory();
+        }
+
+        @Override
+        public Void visitMethod(MethodTree node, Node node2) {
+            BlockTree blockTree = node.getBody();
+
+            if (blockTree != null) {
+                scan(blockTree, node2);
+            }else {
+                System.out.println("方法块为空");
+            }
+            return null;
+        }
+
+        /**
+         * 当访问代码块的时候，
+         * 1.如果只有一个语句，那么直接扫描该语句即可，参数值直接传递给下一级
+         * 2.如果只有两个语句，那么需要创建一个顺序节点，将该顺序节点添加到参数值中，然后扫描每一个语句，
+         * 并且以新的顺序节点作为参数值传递给下一层
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitBlock(BlockTree node, Node node2) {
+            List<JCTree.JCStatement> statements = (List<JCTree.JCStatement>) node.getStatements();
+
+            if (statements != null) {
+                if (statements.size() == 1) {
+                    scan(statements.get(0), node2);
+                } else if (statements.size() > 1) {
+                    Node seqNode = mNodeFactory.getSequenceNode();
+                    node2.addNode(seqNode);
+                    scan(statements, seqNode);
+                }
+            } else {
+                System.out.println("代码块为空,没有语句");
+            }
+
+            return null;
+        }
+
+        /**
+         * 访问表达式语句的结构时
+         * 假装认为可以作为一个原子节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitExpressionStatement(ExpressionStatementTree node, Node node2) {
+            Node atoNode = mNodeFactory.getAtomicNode();
+            node2.addNode(atoNode);
+            return null;
+        }
+
+        /**
+         * 访问变量声明的结构时
+         * 可以作为原子节点条件如下
+         * 1.当变量声明没有初始化
+         * 2.变量初始化的值为字面量
+         * 3.变量初始化的值为标识符
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitVariable(VariableTree node, Node node2) {
+            if (node.getInitializer() == null) {
+                Node atoNode = mNodeFactory.getAtomicNode();
+                node2.addNode(atoNode);
+            } else {
+                boolean isAtomic = false;
+                if (node.getInitializer() instanceof JCTree.JCLiteral)
+                    isAtomic = true;
+                else if (node.getInitializer() instanceof JCTree.JCIdent)
+                    isAtomic = false;
+                else if (node.getInitializer() instanceof JCTree.JCExpression)
+                    isAtomic = true;
+
+                if (isAtomic) {
+                    Node atoNode = mNodeFactory.getAtomicNode();
+                    node2.addNode(atoNode);
+                } else {
+                    // 这里另外解析
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public Void visitReturn(ReturnTree node, Node node2) {
+            Node atoNode = mNodeFactory.getAtomicNode();
+            node2.addNode(atoNode);
+            return null;
+        }
+
+        /**
+         * 当访问while循环结构时
+         * 可以作为一个循环节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitWhileLoop(WhileLoopTree node, Node node2) {
+            Node loopNode = mNodeFactory.getLoopNode();
+            node2.addNode(loopNode);
+            if (node.getStatement() != null) {
+                scan(node.getStatement(), loopNode);
+            }
+            return null;
+        }
+
+        /**
+         * 当访问for循环时
+         * 可以作为一个循环节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitForLoop(ForLoopTree node, Node node2) {
+            Node loopNode = mNodeFactory.getLoopNode();
+            node2.addNode(loopNode);
+            if (node.getStatement() != null) {
+                scan(node.getStatement(), loopNode);
+            }
+            return null;
+        }
+
+        /**
+         * 当访问do-while循环时
+         * 可以作为一个循环节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitDoWhileLoop(DoWhileLoopTree node, Node node2) {
+            Node loopNode = mNodeFactory.getLoopNode();
+            node2.addNode(loopNode);
+            if (node.getStatement() != null) {
+                scan(node.getStatement(), loopNode);
+            }
+            return null;
+        }
+
+        /**
+         * 当访问一个for (String str : list) {}循环时
+         * 可以作为一个循环节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitEnhancedForLoop(EnhancedForLoopTree node, Node node2) {
+            Node loopNode = mNodeFactory.getLoopNode();
+            node2.addNode(loopNode);
+            if (node.getStatement() != null) {
+                scan(node.getStatement(), loopNode);
+            }
+            return null;
+        }
+
+        /**
+         * 当访问一个if-else结构时
+         * 可以作为一个条件节点
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitIf(IfTree node, Node node2) {
+            Node conNode = mNodeFactory.getConditionalNode();
+            node2.addNode(conNode);
+            scan(node.getThenStatement(), conNode);
+            if (node.getElseStatement() != null) {
+                scan(node.getElseStatement(), conNode);
+            }
+            return null;
+        }
+
+        /**
+         * 当访问到一个switch分支时
+         * 为简单起见
+         * 这里先作为一个原子节点处理
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitSwitch(SwitchTree node, Node node2) {
+            Node atoNode = mNodeFactory.getAtomicNode();
+            node2.addNode(atoNode);
+            return null;
+        }
+    }
 
 }
