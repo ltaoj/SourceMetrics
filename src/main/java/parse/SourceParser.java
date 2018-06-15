@@ -627,6 +627,21 @@ public class SourceParser<R, P> {
             node2.addNode(atoNode);
             return null;
         }
+
+        /**
+         * 当访问到一个throw语句时
+         * 可以作为一个原子语句
+         * @param node
+         * @param node2
+         * @return
+         */
+        @Override
+        public Void visitThrow(ThrowTree node, Node node2) {
+            Node atoNode = mNodeFactory.getAtomicNode();
+            node2.addNode(atoNode);
+            return null;
+        }
+
     }
 
 }

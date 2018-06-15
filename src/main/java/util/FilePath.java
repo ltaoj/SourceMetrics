@@ -9,6 +9,6 @@ public class FilePath {
 
     public final String CLASSPATH = this.getClass().getResource("/").getPath();
 
-    public final String PATH = CLASSPATH + "Test.java";
+    public final String PATH = CLASSPATH + "HashMap1.java";
 
 }

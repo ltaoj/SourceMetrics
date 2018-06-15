@@ -36,6 +36,8 @@ public class DummyNode extends Node {
 
     @Override
     public int computeCyclomaticComplexity() {
+        if (children.size() == 0)
+            return 0;
         return children.get(0) != null ? children.get(0).computeCyclomaticComplexity() : 0;
     }
 }

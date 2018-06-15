@@ -20,28 +20,34 @@ public class ConditionalNode extends Node {
 
     @Override
     public int computeNodes() {
-        Node m1 = children.get(0);
+        Node m1 = null;
+        if (children.size() >= 1)
+            children.get(0);
         Node m2 = null;
         if (children.size() == 2)
             m2 = children.get(1);
-        return m1.computeNodes() + (m2 != null ? m2.computeNodes() : 0);
+        return (m1 != null ? m1.computeEdges() : 0) + (m2 != null ? m2.computeNodes() : 0);
     }
 
     @Override
     public int computeEdges() {
-        Node m1 = children.get(0);
+        Node m1 = null;
+        if (children.size() >= 1)
+            children.get(0);
         Node m2 = null;
         if (children.size() == 2)
             m2 = children.get(1);
-        return m1.computeEdges() + (m2 != null ? m2.computeEdges() : 0)  + 2;
+        return (m1 != null ? m1.computeEdges() : 0) + (m2 != null ? m2.computeEdges() : 0)  + 2;
     }
 
     @Override
     public int computeCyclomaticComplexity() {
-        Node m1 = children.get(0);
+        Node m1 = null;
+        if (children.size() >= 1)
+            children.get(0);
         Node m2 = null;
         if (children.size() == 2)
             m2 = children.get(1);
-        return m1.computeCyclomaticComplexity() + (m2 != null ? m2.computeCyclomaticComplexity() : 0)  + 1;
+        return (m1 != null ? m1.computeCyclomaticComplexity() : 0) + (m2 != null ? m2.computeCyclomaticComplexity() : 0)  + 1;
     }
 }
