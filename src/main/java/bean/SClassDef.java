@@ -188,7 +188,7 @@ public class SClassDef extends STreeAbs {
             String name = innerClasses.get(i).getName();
             List<SMethodDef> methods = innerClasses.get(i).getMethods();
             map.put(name, methods != null ? methods.size() : 0);
-            computeAttrsMap(innerClasses.get(i).getInnerClasses(), map);
+            computeMethodMap(innerClasses.get(i).getInnerClasses(), map);
         }
 
         return map;

@@ -3,7 +3,6 @@ package parse;
 import bean.SAttributeDef;
 import bean.SClassDef;
 import bean.SMethodDef;
-import com.sun.imageio.plugins.jpeg.JPEG;
 import com.sun.source.tree.*;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.file.JavacFileManager;
