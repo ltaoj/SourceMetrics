@@ -1,15 +1,20 @@
 package parse;
 
 import algorithm.ClassMetricsFactors;
+import algorithm.CodeSmellMetrics;
 import algorithm.FileMetricsFactors;
 import algorithm.MethodMetricsFactors;
 import algorithm.impl.ClassMetricsFactorsimpl;
+import algorithm.impl.CodeSmellMetricsimpl;
 import algorithm.impl.FileMetricsFactorsAdapter;
+import bean.SClassDef;
+import bean.SMethodDef;
 import org.apache.log4j.Logger;
 import util.FilePath;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 public class ShowReport {
@@ -134,6 +139,20 @@ public class ShowReport {
         maxEntry = Collections.max(map.entrySet(), comparator);
         logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 3th -> " + maxEntry.getValue());
         logger.info("平均方法圏复杂度 -> " + sum / map.size());
+        logger.info("***************************************************************************");
+
+
+        // 度量代码味道
+        SClassDef dummy = ((ClassMetricsFactorsimpl) classMetricsFactors).getDummy();
+        CodeSmellMetrics codeSmellMetrics = new CodeSmellMetricsimpl();
+        Map<String, List<SMethodDef>> smellMap = codeSmellMetrics.tooManyParams(dummy.getClassMethodsMap());
+
+        logger.info("代码味道 -> 以下方法存在过长参数列的问题");
+        for (String key : smellMap.keySet()) {
+            for (SMethodDef method : smellMap.get(key)) {
+                logger.info("方法名 - > " + key + "." + method.getName() + " ; 参数个数 -> " + method.getParameters().size());
+            }
+        }
         logger.info("***************************************************************************");
     }
 

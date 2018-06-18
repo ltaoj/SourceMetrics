@@ -93,4 +93,8 @@ public class ClassMetricsFactorsimpl implements ClassMetricsFactors, MethodMetri
     public Map<String, Integer> getCyclomaticComplexityOfMethod() {
         return dummy.computeMethodComplexityMap();
     }
+
+    public SClassDef getDummy() {
+        return dummy;
+    }
 }

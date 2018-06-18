@@ -139,7 +139,33 @@ public class SClassDef extends STreeAbs {
         return Kind.CLASS_TYPE;
     }
 
+    /**
+     * 返回类及其方法的集合
+     * @return
+     */
+    public Map<String, List<SMethodDef>> getClassMethodsMap() {
+        final List<SClassDef> innerClasses = this.innerClasses;
+        return getClassMethodsMap(innerClasses, null);
+    }
 
+    public Map<String, List<SMethodDef>> getClassMethodsMap(List<SClassDef> innerClasses, Map<String, List<SMethodDef>> map) {
+        if (innerClasses == null)
+            return map;
+
+        if (map == null)
+            map = new HashMap<String, List<SMethodDef>>();
+
+        for (int i = 0;i < innerClasses.size();i++) {
+            String name = innerClasses.get(i).getName();
+            List<SMethodDef> methods = innerClasses.get(i).getMethods();
+            if (methods != null)
+                map.put(name, methods);
+
+            getClassMethodsMap(innerClasses.get(i).getInnerClasses(), map);
+        }
+
+        return map;
+    }
     /**
      * 计算每个类的属性个数
      * @return
