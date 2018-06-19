@@ -505,7 +505,7 @@ public class SourceParser<R, P> {
                 if (node.getInitializer() instanceof JCTree.JCLiteral)
                     isAtomic = true;
                 else if (node.getInitializer() instanceof JCTree.JCIdent)
-                    isAtomic = false;
+                    isAtomic = true;
                 else if (node.getInitializer() instanceof JCTree.JCExpression)
                     isAtomic = true;
 
