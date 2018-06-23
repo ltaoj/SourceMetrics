@@ -23,13 +23,22 @@ public class ShowReport {
 
     private String javaFile;
 
+    public ShowReport() {
+    }
+
     public ShowReport(String javaFile) {
         this.javaFile = javaFile;
+    }
+
+    public ShowReport setJavaFile(String javaFile) {
+        this.javaFile = javaFile;
+        return this;
     }
 
     public void show() {
         FilePath filePath = new FilePath();
         FileMetricsFactors fileMetricsFactors = new FileMetricsFactorsAdapter();
+        logger.info("文件名: " + javaFile);
         logger.info("***************************************************************************");
         logger.info("java文件分析结果：                                                          *");
         logger.info("***************************************************************************");

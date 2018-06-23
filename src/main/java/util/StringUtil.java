@@ -94,8 +94,11 @@ public class StringUtil {
         boolean newDocStart = false;
         String line;
         while ((endPos != -1 && (line = code.substring(startPos, endPos)) != null)) {
-            if (StringUtil.isEmptyString(line))
+            if (StringUtil.isEmptyString(line)) {
+                startPos = endPos+1;
+                endPos = code.indexOf('\n', startPos);
                 continue;
+            }
             // 当需要忽略文档注释时执行此代码块
             if (ignoreDocComment) {
                 if (newDocStart && !StringUtil.hasDocCommentEnd(line)) {

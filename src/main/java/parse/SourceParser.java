@@ -434,7 +434,6 @@ public class SourceParser<R, P> {
         @Override
         public Void visitMethod(MethodTree node, Node node2) {
             BlockTree blockTree = node.getBody();
-
             if (blockTree != null) {
                 scan(blockTree, node2);
             }else {
@@ -641,6 +640,16 @@ public class SourceParser<R, P> {
             return null;
         }
 
+        @Override
+        public Void visitTry(TryTree node, Node node2) {
+            if (node.getBlock().getStatements().size() == 0) {
+                Node atoNode = mNodeFactory.getAtomicNode();
+                node2.addNode(atoNode);
+            } else {
+                scan(node.getBlock(), node2);
+            }
+            return null;
+        }
     }
 
 }
