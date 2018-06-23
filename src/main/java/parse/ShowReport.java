@@ -92,15 +92,17 @@ public class ShowReport {
 //            logger.info("方法名 -> " + key + " ; 代码行数 -> " + map.get(key));
         }
 
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 1th -> " + maxEntry.getValue());
-        map.remove(maxEntry.getKey());
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 2th -> " + maxEntry.getValue());
-        map.remove(maxEntry.getKey());
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 3th -> " + maxEntry.getValue());
-        logger.info("平均方法代码行数 -> " + sum / map.size());
+        if (map.size() > 0) {
+            maxEntry = Collections.max(map.entrySet(), comparator);
+            logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 1th -> " + maxEntry.getValue());
+//        map.remove(maxEntry.getKey());
+//        maxEntry = Collections.max(map.entrySet(), comparator);
+//        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 2th -> " + maxEntry.getValue());
+//        map.remove(maxEntry.getKey());
+//        maxEntry = Collections.max(map.entrySet(), comparator);
+//        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 代码行数 3th -> " + maxEntry.getValue());
+            logger.info("平均方法代码行数 -> " + sum / map.size());
+        }
 
 
         logger.info("***************************************************************************");
@@ -110,7 +112,9 @@ public class ShowReport {
 //            logger.info("方法名 -> " + key + " ; 语句个数 -> " + map.get(key));
             sum += map.get(key);
         }
-        logger.info("平均方法语句个数 -> " + sum / map.size());
+        if (map.size() > 0) {
+            logger.info("平均方法语句个数 -> " + sum / map.size());
+        }
 
 
         logger.info("***************************************************************************");
@@ -120,7 +124,9 @@ public class ShowReport {
 //            logger.info("方法名 -> " + key + " ; 注释行数 -> " + map.get(key));
             sum += map.get(key);
         }
-        logger.info("平均方法注释行数 -> " + sum / map.size());
+        if (map.size() > 0) {
+            logger.info("平均方法注释行数 -> " + sum / map.size());
+        }
 
 
         logger.info("***************************************************************************");
@@ -130,15 +136,17 @@ public class ShowReport {
 //            logger.info("方法名 -> " + key + " ; 圏复杂度 -> " + map.get(key));
             sum += map.get(key);
         }
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 1th -> " + maxEntry.getValue());
-        map.remove(maxEntry.getKey());
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 2th -> " + maxEntry.getValue());
-        map.remove(maxEntry.getKey());
-        maxEntry = Collections.max(map.entrySet(), comparator);
-        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 3th -> " + maxEntry.getValue());
-        logger.info("平均方法圏复杂度 -> " + sum / map.size());
+        if (map.size() > 0) {
+            maxEntry = Collections.max(map.entrySet(), comparator);
+            logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 1th -> " + maxEntry.getValue());
+//        map.remove(maxEntry.getKey());
+//        maxEntry = Collections.max(map.entrySet(), comparator);
+//        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 2th -> " + maxEntry.getValue());
+//        map.remove(maxEntry.getKey());
+//        maxEntry = Collections.max(map.entrySet(), comparator);
+//        logger.info("*方法名 -> " + maxEntry.getKey() + " ; 圏复杂度 3th -> " + maxEntry.getValue());
+            logger.info("平均方法圏复杂度 -> " + sum / map.size());
+        }
         logger.info("***************************************************************************");
 
 

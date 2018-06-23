@@ -7,7 +7,7 @@ package util;
  */
 public class FilePath {
 
-    public final String CLASSPATH = this.getClass().getResource("/").getPath();
+    public final String CLASSPATH = getClass().getResource("").getPath().replace(this.getClass().getPackage().getName()+"/", "");
 
     public final String PATH = CLASSPATH + "HashMap1.java";
 
